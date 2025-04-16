@@ -1,0 +1,26 @@
+---
+- name: CI/CD App Deployment
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: Ensure /opt/myciapp exists
+      file:
+        path: /opt/myciapp
+        state: directory
+
+    - name: Copy app files from repo
+      copy:
+        src: Q5/index.js
+        dest: /opt/myciapp/index.js
+        mode: '0644'
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+        update_cache: yes
+
+    - name: Start app
+      shell: "nohup node /opt/myciapp/index.js > /opt/myciapp/app.log 2>&1 &"
